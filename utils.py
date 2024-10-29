@@ -9,13 +9,16 @@ from PIL import Image
 
 
 def path_to_image(path, size=(1024, 1024), color_type=['rgb', 'gray'][0]):
-    if color_type.lower() == 'rgb':
-        image = cv2.imread(path)
-    elif color_type.lower() == 'gray':
-        image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+    if isinstance(path, str):
+        if color_type.lower() == 'rgb':
+            image = cv2.imread(path)
+        elif color_type.lower() == 'gray':
+            image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+        else:
+            print('Select the color_type to return, either to RGB or gray image.')
+            return
     else:
-        print('Select the color_type to return, either to RGB or gray image.')
-        return
+        image = path # 直接传入np.ndarray
     if size:
         image = cv2.resize(image, size, interpolation=cv2.INTER_LINEAR)
     if color_type.lower() == 'rgb':
@@ -116,3 +119,13 @@ def end_timer_and_print(local_msg):
     print("\n" + local_msg)
     print("Total execution time = {:.3f} sec".format(end_time - start_time))
     print("Max memory used by tensors = {} bytes".format(torch.cuda.max_memory_allocated()))
+
+def get_img_files(root):
+    img_paths = []
+    for root_, dirs, files in os.walk(root):
+        for f in files:
+            if f[0] == '.':
+                continue
+            if os.path.splitext(f)[1] in (".jpg", ".jpeg", ".png", ".JPG", ".JPEG", ".PNG"):
+                img_paths.append(os.path.join(root_, f))
+    return img_paths

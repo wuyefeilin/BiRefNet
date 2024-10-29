@@ -8,12 +8,14 @@ class Config():
         # Make up your file system as: SYS_HOME_DIR/codes/dis/BiRefNet, SYS_HOME_DIR/datasets/dis/xx, SYS_HOME_DIR/weights/xx
         self.sys_home_dir = [os.path.expanduser('~'), '/mnt/data'][0]   # Default, custom
         # self.data_root_dir = os.path.join(self.sys_home_dir, 'datasets/dis')
-        self.data_root_dir = "/root/group-trainee/cgw/datasets/public/HQSeg-44K"
+        # self.data_root_dir = "/root/group-trainee/cgw/datasets/public/HQSeg-44K"
+        self.data_root_dir = "/data_ssd/datasets/SegRefineDatasets"
 
         # TASK settings
-        self.task = ['DIS5K', 'COD', 'HRSOD', 'General', 'General-2K', 'Matting'][0]
+        self.task = ['sky1000', 'DIS5K', 'COD', 'HRSOD', 'General', 'General-2K', 'Matting'][0]
         self.testsets = {
             # Benchmarks
+            'sky1000': 'val',
             'DIS5K': ','.join(['DIS-VD', 'DIS-TE1', 'DIS-TE2', 'DIS-TE3', 'DIS-TE4']),
             'COD': ','.join(['CHAMELEON', 'NC4K', 'TE-CAMO', 'TE-COD10K']),
             'HRSOD': ','.join(['DAVIS-S', 'TE-HRSOD', 'TE-UHRSD', 'DUT-OMRON', 'TE-DUTS']),
@@ -24,6 +26,7 @@ class Config():
         }[self.task]
         datasets_all = '+'.join([ds for ds in (os.listdir(os.path.join(self.data_root_dir, self.task)) if os.path.isdir(os.path.join(self.data_root_dir, self.task)) else []) if ds not in self.testsets.split(',')])
         self.training_set = {
+            'sky1000': 'train',
             'DIS5K': ['DIS-TR', 'DIS-TR+DIS-TE1+DIS-TE2+DIS-TE3+DIS-TE4'][0],
             'COD': 'TR-COD10K+TR-CAMO',
             'HRSOD': ['TR-DUTS', 'TR-HRSOD', 'TR-UHRSD', 'TR-DUTS+TR-HRSOD', 'TR-DUTS+TR-UHRSD', 'TR-HRSOD+TR-UHRSD', 'TR-DUTS+TR-HRSOD+TR-UHRSD'][5],
@@ -54,10 +57,11 @@ class Config():
         self.dec_blk = ['BasicDecBlk', 'ResBlk'][0]
 
         # TRAINING settings
-        self.batch_size = 4
+        self.batch_size = 2
         self.finetune_last_epochs = [
             0,
             {
+                'sky1000': -40,
                 'DIS5K': -40,
                 'COD': -20,
                 'HRSOD': -20,
@@ -158,7 +162,8 @@ class Config():
         self.lambda_adv_d = 3. * (self.lambda_adv_g > 0)
 
         # PATH settings - inactive
-        self.weights_root_dir = os.path.join(self.sys_home_dir, 'weights/cv')
+        # self.weights_root_dir = os.path.join(self.sys_home_dir, 'weights/cv')
+        self.weights_root_dir = "/root/cgw/SegRefine/BiRefNet/pretrained_models"
         self.weights = {
             'pvt_v2_b2': os.path.join(self.weights_root_dir, 'pvt_v2_b2.pth'),
             'pvt_v2_b5': os.path.join(self.weights_root_dir, ['pvt_v2_b5.pth', 'pvt_v2_b5_22k.pth'][0]),
