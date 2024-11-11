@@ -36,7 +36,7 @@ def inference(model, image_list, pred_root, device=0):
         with torch.no_grad():
             pred = model(inputs)[-1].sigmoid()
         print("model output: ", pred.shape)
-        pred = torch.nn.functional.interpolate(pred, size=(h, w), mode='bilinear', align_corners=False)
+        pred = torch.nn.functional.interpolate(pred, size=(h, w), mode='bilinear', align_corners=True)
         
         name = os.path.splitext(os.path.basename(image_path))[0]
         save_path = os.path.join(pred_root, name+'.png')
